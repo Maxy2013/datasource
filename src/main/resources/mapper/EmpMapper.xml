@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wxxcx.demo.dao.EmpMapper">
+
+    <resultMap id="empResultType" type="com.wxxcx.demo.entity.EmpVo">
+        <result property="eId" column="e_id" jdbcType="VARCHAR"/>
+        <result property="eName" column="e_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="queryEmp" resultMap="empResultType">
+          SELECT e_id, e_name FROM emp
+    </select>
+</mapper>

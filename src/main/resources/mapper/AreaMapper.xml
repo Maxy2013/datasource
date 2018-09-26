@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wxxcx.demo.dao.AreaMapper">
+    <select id="querArea" resultType="com.wxxcx.demo.entity.Area">
+          SELECT *
+          FROM emp
+    </select>
+    <select id="querAreaById" resultType="com.wxxcx.demo.entity.Area">
+        SELECT *
+        FROM tb_area
+        <where>
+            WHERE area_id = #{areaId}
+        </where>
+    </select>
+    <!--<insert id="insertArea" useGeneratedKeys="true"-->
+            <!--keyProperty="areaId" keyColumn="area_id" parameterType="com.wxxcx.demo.entity.Area">-->
+        <!--INSERT INTO-->
+        <!--tb_area(area_name,priority,create_time,last_edit_time)-->
+        <!--VALUES (#{areaName},#{prioripy},#{createTime},#{},#{lastEditTime})-->
+    <!--</insert>-->
+    <update id="updateArea" parameterType="com.wxxcx.demo.entity.Area">
+        UPDATE tb_area
+        <set>
+            <if test="areaName != null">area_name=#{areaName},</if>
+            <if test="prioripy != null">prioripy=#{prioripy},</if>
+            <if test="lastEditTime != null">last_edit_time=#{lastEditTime},</if>
+        </set>
+        <where>
+            WHERE area_id=#{areaId}
+        </where>
+    </update>
+    <delete id="deleteArea">
+        DELETE FROM
+        tb_area
+        WHERE
+        area_id = #{areaId}
+    </delete>
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="log.base" value="/iot/logs/ccmp-de-inbound-processor/ccmp-de-inbound-processor"/>
+
+	<!-- Console stdout -->
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%-20(%d{HH:mm:ss.SSS} [%thread]) %-5level %logger{80} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--#INFO Appender (Store info message, rolling with daily,The default log for 30 days) -->
+	<appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.base}.%d{yyyy-MM-dd}.%d{HH-mm-ss}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{80} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Async Append Info -->
+	<appender name="async_append_info" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>10</queueSize>
+		<appender-ref ref="RollingFile"/>
+	</appender>
+
+	<!--#ERROR Appender (Store error message, rolling with daily,The default log for 30 days) -->
+	<appender name="ErrorRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.base}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-4relative [%thread] %-5level %logger{80} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Async Append Error -->
+	<appender name="async_append_error" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>10</queueSize>
+		<appender-ref ref="ErrorRollingFile"/>
+	</appender>
+
+	<!--#TraceFile Appender (Store debug message, rolling with 100M, 10 files, threshold is OFF)-->
+	<appender name="TraceRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.base}-trace.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${log.base}-trace%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>100MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%date %-4relative [%thread] %-5level %logger{80} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Async Append Trace -->
+	<appender name="async_append_trace" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>10</queueSize>
+		<appender-ref ref="TraceRollingFile"/>
+	</appender>
+
+	<!--Application log is appended to the RollingFile,The default level is INFO-->
+	<logger name="ccmp.de.inbound">
+		<appender-ref ref="async_append_info"/>
+	</logger>
+
+	<!--Application log is appended to the ErrorRollingFile,The default level is ERROR-->
+	<logger name="ccmp.de.inbound">
+		<appender-ref ref="async_append_error"/>
+	</logger>
+
+	<logger name="org.apache.activemq" level="ERROR" />
+	<logger name="org.springframework.jms.connection" level="INFO" />
+	<logger name="org.springframework.beans" level="INFO" />
+	<logger name="org.springframework.core.env" level="INFO" />
+	<logger name="com.atomikos.icatch.imp.CompositeTransactionImp" level="INFO" />
+	<logger name="org.springframework.jms.listener.DefaultMessageListenerContainer" level="INFO" />
+	<logger name="org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer" level="INFO" />
+
+	<!--Application log is appended to the Console and TraceRollingFile，The default level is ERROR-->
+	<root name="ccmp.de.inbound" level="DEBUG">
+		<appender-ref ref="stdout"/>
+		<appender-ref ref="async_append_trace"/>
+	</root>
+</configuration>
